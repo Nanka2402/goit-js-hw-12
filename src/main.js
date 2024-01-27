@@ -1,12 +1,9 @@
-// Описаний у документації
 import iziToast from 'izitoast';
-// Додатковий імпорт стилів
 import 'izitoast/dist/css/iziToast.min.css';
-// Описаний у документації
 import SimpleLightbox from 'simplelightbox';
-// Додатковий імпорт стилів
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import axios from 'axios';
+
 document.addEventListener('DOMContentLoaded', function () {
   const loaderContainer = document.getElementById('loader-container');
   const searchForm = document.getElementById('searchForm');
@@ -66,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
           title: 'Error',
           message: 'No images found for the provided search term',
         });
+        gallery.innerHTML = '';
       } else {
         displayImages(response.data.hits);
       }
@@ -113,24 +111,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function displayImages(images) {
-    gallery.innerHTML = '';
-
-    if (images.length === 0) {
-      iziToast.info({
-        title: 'Info',
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
-      });
-      hideLoader();
-      return;
-    }
-
-    images.forEach(image => {
-      const card = document.createElement('div');
-      card.className = 'gallery-item';
-
-      // Обгортаємо картку зображення в посилання для SimpleLightbox
-      card.innerHTML = `
+    const galleryHTML = images
+      .map(image => {
+        return `
+         <div class="gallery-item">
       <a href="${image.largeImageURL}" data-lightbox="gallery" data-title="Likes: ${image.likes}, Views: ${image.views}, Comments: ${image.comments}, Downloads: ${image.downloads}">
           <img src="${image.webformatURL}" alt="${image.tags}" data-src="${image.largeImageURL}" data-caption="Likes: ${image.likes}, Views: ${image.views}, Comments: ${image.comments}, Downloads: ${image.downloads}">
         </a>
@@ -152,11 +136,11 @@ document.addEventListener('DOMContentLoaded', function () {
         <p class="stat-value">${image.downloads}</p>
       </div>
     </div>
+    </div>
       `;
-
-      gallery.appendChild(card);
-    });
-
+      })
+      .join('');
+    gallery.insertAdjacentHTML('beforeend', galleryHTML);
     const lightbox = new SimpleLightbox('.gallery a', {
       captionsData: 'alt',
       captionDelay: 250,
