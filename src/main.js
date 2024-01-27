@@ -56,27 +56,23 @@ document.addEventListener('DOMContentLoaded', function () {
         },
       });
 
-      totalHits = response.data.totalHits; // Оновлюємо totalHits
+      totalHits = response.data.totalHits;
+
+      gallery.innerHTML = '';
 
       if (response.data.hits.length === 0) {
         iziToast.error({
           title: 'Error',
           message: 'No images found for the provided search term',
         });
-        gallery.innerHTML = '';
       } else {
         displayImages(response.data.hits);
-      }
 
-      if (currentPage * 40 >= totalHits) {
-        // Якщо кількість виведених зображень перевищує або рівна загальній кількості
-        loadMoreButton.style.display = 'none'; // Ховаємо кнопку
-        iziToast.info({
-          title: 'Info',
-          message: "We're sorry, but you've reached the end of search results.",
-        });
-      } else {
-        loadMoreButton.style.display = 'block'; // Показуємо кнопку
+        if (currentPage * 40 >= totalHits) {
+          loadMoreButton.style.display = 'none';
+        } else {
+          loadMoreButton.style.display = 'block';
+        }
       }
     } catch (error) {
       iziToast.error({
@@ -96,7 +92,10 @@ document.addEventListener('DOMContentLoaded', function () {
       .querySelector('.gallery-item')
       .getBoundingClientRect().height;
 
-    window.scrollBy(0, cardHeight * 2);
+    window.scrollTo({
+      top: window.scrollY + cardHeight * 2,
+      behavior: 'smooth',
+    });
   }
   function showLoader(loaderContainer) {
     if (loaderContainer) {
@@ -140,13 +139,14 @@ document.addEventListener('DOMContentLoaded', function () {
       `;
       })
       .join('');
+
     gallery.insertAdjacentHTML('beforeend', galleryHTML);
+
     const lightbox = new SimpleLightbox('.gallery a', {
       captionsData: 'alt',
       captionDelay: 250,
     });
 
     lightbox.refresh();
-    // Оновлення галереї
   }
 });
