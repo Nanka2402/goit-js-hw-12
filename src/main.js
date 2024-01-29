@@ -74,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           loadMoreButton.style.display = 'block';
         }
-        smoothScroll();
       }
     } catch (error) {
       iziToast.error({
@@ -87,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
   loadMoreButton.addEventListener('click', async function () {
     currentPage++;
     await fetchData(currentSearchTerm);
+    smoothScroll();
   });
   function smoothScroll() {
     const cardHeight = document
